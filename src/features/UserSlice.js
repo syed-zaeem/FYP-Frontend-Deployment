@@ -10,7 +10,7 @@ export const registerNewUser = createAsyncThunk(
   "registerNewUser",
   async ({ data }, thunkAPI) => {
     console.log("The data for body of request is: ", data);
-    const res = await fetch("http://127.0.0.1:8000/register", {
+    const res = await fetch("https://fyp-backend-1-og5r.onrender.com/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -46,7 +46,7 @@ export const loginUser = createAsyncThunk(
   "loginUser",
   async ({ data }, thunkAPI) => {
     console.log("The data for body of request is: ", data);
-    const res = await fetch("http://127.0.0.1:8000/login", {
+    const res = await fetch("https://fyp-backend-1-og5r.onrender.com/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -78,7 +78,7 @@ export const logoutUser = createAsyncThunk(
   "logoutUser",
   async (thunkAPI) => {
     console.log("I am ready for logout.");
-    const res = await fetch("http://127.0.0.1:8000/logout", {
+    const res = await fetch("https://fyp-backend-1-og5r.onrender.com/logout", {
       method: "POST",
       // credentials: "include",
     });
@@ -104,13 +104,13 @@ export const logoutUser = createAsyncThunk(
 
 const refreshToken = async () => {
   const refresh_token = localStorage.getItem("refresh_token");
-  const res = await fetch("http://127.0.0.1:8000/refersh-token", {
+  const res = await fetch("https://fyp-backend-1-og5r.onrender.com/refersh-token", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: { refresh_token },
-    credentials: "include",
+    // credentials: "include",
   });
 
   const response = await res.json();
@@ -123,8 +123,8 @@ const refreshToken = async () => {
 };
 
 export const getUserDetails = createAsyncThunk("getUserDetails", async () => {
-  const res = await fetch("http://127.0.0.1:8000/user", {
-    credentials: "include",
+  const res = await fetch("https://fyp-backend-1-og5r.onrender.com/user", {
+    // credentials: "include",
   });
 
   const response = await res.json();
@@ -136,8 +136,8 @@ export const getUserDetails = createAsyncThunk("getUserDetails", async () => {
     if (
       refreshTokenResponse.message === "Access token refreshed successfully"
     ) {
-      const newRes = await fetch("http://127.0.0.1:8000/user", {
-        credentials: "include",
+      const newRes = await fetch("https://fyp-backend-1-og5r.onrender.com/user", {
+        // credentials: "include",
       });
 
       const newResponse = await newRes.json();
@@ -155,13 +155,13 @@ export const getUserDetails = createAsyncThunk("getUserDetails", async () => {
 
 export const sendFeedback = createAsyncThunk("sendFeedback", async (data) => {
   console.log("The data for body of request is: ", data);
-  const res = await fetch("http://127.0.0.1:8000/contact-form", {
+  const res = await fetch("https://fyp-backend-1-og5r.onrender.com/contact-form", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
-    credentials: "include",
+    // credentials: "include",
   });
 
   const response = await res.json();
@@ -175,7 +175,7 @@ export const updateUserDetails = createAsyncThunk(
   "updateUserDetails",
   async (data) => {
     const token = localStorage.getItem('access_token');
-    const res = await fetch("http://127.0.0.1:8000/user", {
+    const res = await fetch("https://fyp-backend-1-og5r.onrender.com/user", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -196,13 +196,13 @@ export const updateUserDetails = createAsyncThunk(
 export const updateUserPassword = createAsyncThunk(
   "updateUserPasswords",
   async (data) => {
-    const res = await fetch("http://127.0.0.1:8000/user", {
+    const res = await fetch("https://fyp-backend-1-og5r.onrender.com/user", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
-      credentials: "include",
+      // credentials: "include",
     });
 
     const response = await res.json();
