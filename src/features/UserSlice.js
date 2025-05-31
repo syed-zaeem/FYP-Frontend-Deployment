@@ -10,25 +10,33 @@ export const registerNewUser = createAsyncThunk(
   "registerNewUser",
   async ({ data }, thunkAPI) => {
     console.log("The data for body of request is: ", data);
-    const res = await fetch("https://fyp-backend-1-og5r.onrender.com/register", {
+    const res = await fetch("http://127.0.0.1:8000/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
-      credentials: "include",
+      // credentials: "include",
     });
 
     const response = await res.json();
+    console.log("Res is:" , res)
 
     if (res.ok) {
       console.log("The response is ok");
+      // console.log("The access token is:" , response.data.access_token)
+      // console.log("The refresh token is:" , response.data.refresh_token)
       // navigate("/");
     } else {
       return thunkAPI.rejectWithValue(response);
     }
 
-    console.log(response);
+    localStorage.setItem("access_token", response.access_token);
+    localStorage.setItem("refresh_token", response.refresh_token);
+    console.log("The access token 2 is:" , response.access_token)
+    console.log("The refresh token 2 is:" , response.refresh_token)
+
+    console.log("The response in slice is:", response);
 
     return response;
   }
@@ -38,13 +46,13 @@ export const loginUser = createAsyncThunk(
   "loginUser",
   async ({ data }, thunkAPI) => {
     console.log("The data for body of request is: ", data);
-    const res = await fetch("https://fyp-backend-1-og5r.onrender.com/login", {
+    const res = await fetch("http://127.0.0.1:8000/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
-      credentials: "include",
+      // credentials: "include",
     });
 
     const response = await res.json();
@@ -56,6 +64,10 @@ export const loginUser = createAsyncThunk(
       return thunkAPI.rejectWithValue(response);
     }
 
+    // After login API call
+    localStorage.setItem("access_token", response.access_token);
+    localStorage.setItem("refresh_token", response.refresh_token);
+
     console.log(response);
 
     return response;
@@ -64,18 +76,22 @@ export const loginUser = createAsyncThunk(
 
 export const logoutUser = createAsyncThunk(
   "logoutUser",
-  async ({ navigate }, thunkAPI) => {
-    console.log("I am ready for logout.")
-    const res = await fetch("https://fyp-backend-1-og5r.onrender.com/logout", {
+  async (thunkAPI) => {
+    console.log("I am ready for logout.");
+    const res = await fetch("http://127.0.0.1:8000/logout", {
       method: "POST",
-      credentials: "include",
+      // credentials: "include",
     });
 
     const response = await res.json();
 
+    console.log("The response of logout is:" , response)
+
     if (response.message === "Logout successful") {
-      console.log("Message of response is" , response.message)
-      navigate("/Login");
+      console.log("Message of response is", response.message);
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      // navigate("/Login");
     } else {
       return thunkAPI.rejectWithValue(response);
     }
@@ -87,23 +103,27 @@ export const logoutUser = createAsyncThunk(
 );
 
 const refreshToken = async () => {
-  const res = await fetch("https://fyp-backend-1-og5r.onrender.com/refersh-token", {
+  const refresh_token = localStorage.getItem("refresh_token");
+  const res = await fetch("http://127.0.0.1:8000/refersh-token", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    credentials: 'include'
+    body: { refresh_token },
+    credentials: "include",
   });
 
   const response = await res.json();
 
-  console.log("The response of refresh token is: " , response);
+  localStorage.setItem("access_token", response.data.access_token);
+
+  console.log("The response of refresh token is: ", response);
 
   return response;
 };
 
 export const getUserDetails = createAsyncThunk("getUserDetails", async () => {
-  const res = await fetch("https://fyp-backend-1-og5r.onrender.com/user", {
+  const res = await fetch("http://127.0.0.1:8000/user", {
     credentials: "include",
   });
 
@@ -112,15 +132,20 @@ export const getUserDetails = createAsyncThunk("getUserDetails", async () => {
   console.log("The response for get user details:", response);
 
   if (response.detail == "Authentication credentials were not provided.") {
-    const refreshTokenResponse = await refreshToken()
-    if(refreshTokenResponse.message === "Access token refreshed successfully"){
-      const newRes = await fetch("https://fyp-backend-1-og5r.onrender.com/user", {
+    const refreshTokenResponse = await refreshToken();
+    if (
+      refreshTokenResponse.message === "Access token refreshed successfully"
+    ) {
+      const newRes = await fetch("http://127.0.0.1:8000/user", {
         credentials: "include",
       });
-    
+
       const newResponse = await newRes.json();
 
-      console.log("The new response after refreshing token and get user details again is: " , newResponse)
+      console.log(
+        "The new response after refreshing token and get user details again is: ",
+        newResponse
+      );
       return newResponse;
     }
   }
@@ -130,7 +155,48 @@ export const getUserDetails = createAsyncThunk("getUserDetails", async () => {
 
 export const sendFeedback = createAsyncThunk("sendFeedback", async (data) => {
   console.log("The data for body of request is: ", data);
-    const res = await fetch("https://fyp-backend-1-og5r.onrender.com/contact-form", {
+  const res = await fetch("http://127.0.0.1:8000/contact-form", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+    credentials: "include",
+  });
+
+  const response = await res.json();
+
+  console.log(response);
+
+  return response;
+});
+
+export const updateUserDetails = createAsyncThunk(
+  "updateUserDetails",
+  async (data) => {
+    const token = localStorage.getItem('access_token');
+    const res = await fetch("http://127.0.0.1:8000/user", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`, // <-- JWT in Authorization header
+      },
+      body: JSON.stringify(data),
+      // credentials: "include",
+    });
+
+    const response = await res.json();
+
+    console.log(response);
+
+    return response;
+  }
+);
+
+export const updateUserPassword = createAsyncThunk(
+  "updateUserPasswords",
+  async (data) => {
+    const res = await fetch("http://127.0.0.1:8000/user", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -144,41 +210,8 @@ export const sendFeedback = createAsyncThunk("sendFeedback", async (data) => {
     console.log(response);
 
     return response;
-})
-
-export const updateUserDetails = createAsyncThunk("updateUserDetails", async (data) => {
-  const res = await fetch("https://fyp-backend-1-og5r.onrender.com/user", {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-    credentials: "include",
-  });
-
-  const response = await res.json();
-
-  console.log(response);
-
-  return response;
-})
-
-export const updateUserPassword = createAsyncThunk("updateUserPasswords", async (data) => {
-  const res = await fetch("https://fyp-backend-1-og5r.onrender.com/user", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-    credentials: "include",
-  });
-
-  const response = await res.json();
-
-  console.log(response);
-
-  return response;
-})
+  }
+);
 
 export const UserSlice = createSlice({
   name: "users",
@@ -273,7 +306,7 @@ export const UserSlice = createSlice({
       })
       .addCase(createAction(logoutUser.pending), (state) => {
         state.loading = true;
-        console.log("Pending")
+        console.log("Pending");
       })
       .addCase(createAction(logoutUser.fulfilled), (state, action) => {
         state.loading = false;
@@ -285,14 +318,13 @@ export const UserSlice = createSlice({
         //   alert("Your current password is incorrect.")
         // }
         // state.loggedInUser = action.payload;
-        console.log("Fulfilled")
+        console.log("Fulfilled");
       })
       .addCase(createAction(logoutUser.rejected), (state, action) => {
         state.loading = false;
         state.error = action.payload;
-        console.log("Rejected")
-      })
-      ;
+        console.log("Rejected");
+      });
   },
 });
 

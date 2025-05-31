@@ -1,11 +1,11 @@
 import { Page } from "./dashboard/page";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import TrendingTopics from "./pages/TrendingTopics";
-import Charts from "./pages/Charts";
-import Home from "./pages/Home";
-import Home_CustomTopics from "./pages/Home_CustomTopics";
+import Login from "./Pages/Login";
+import Signup from "./Pages/Signup";
+import TrendingTopics from "./Pages/TrendingTopics";
+import Charts from "./Pages/Charts";
+import Home from "./Pages/Home";
+import Home_CustomTopics from "./Pages/Home_CustomTopics";
 import Admin_HomePage from "./pages/Admin_HomePage";
 import Admin_Users from "./pages/Admin_Users";
 import { Provider } from "react-redux";

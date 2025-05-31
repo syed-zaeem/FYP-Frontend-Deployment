@@ -34,6 +34,7 @@ const Signup = () => {
     if (newUser.password === cPassword) {
       console.log("The new user for registration is: ", newUser);
       let response = await dispatch(registerNewUser({ data: newUser }));
+      console.log("The response is:" , response)
       // if(response.payload.action === "success"){
       if(response.meta.requestStatus === "fulfilled"){
         toast.success("Account has been created successfully!", {

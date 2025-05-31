@@ -14,7 +14,7 @@ export const getMostTrendingTopics = createAsyncThunk(
   async (data) => {
     console.log("The data for body of request is: ", data);
     const res = await fetch(
-      "https://fyp-backend-1-og5r.onrender.com/most-frequent-entity-query",
+      "http://127.0.0.1:8000/most-frequent-entity-query",
       {
         method: "POST",
         headers: {
@@ -41,7 +41,7 @@ export const getChannelWiseTrendingTopics = createAsyncThunk(
   "topics/channelwiseTrendingTopics",
   async (data) => {
     const res = await fetch(
-      "https://fyp-backend-1-og5r.onrender.com/most-frequent-entity-query-byChannel",
+      "http://127.0.0.1:8000/most-frequent-entity-query-byChannel",
       {
         method: "POST",
         headers: {
@@ -60,7 +60,7 @@ export const getChannelWiseTrendingTopics = createAsyncThunk(
 );
 
 export const getChannels = createAsyncThunk("topics/channels", async () => {
-  const res = await fetch("https://fyp-backend-1-og5r.onrender.com/get_all_channels", {
+  const res = await fetch("http://127.0.0.1:8000/get_all_channels", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -79,7 +79,7 @@ export const getChannelSpecificMostTredingTopics = createAsyncThunk(
   async (data) => {
     console.log("I am here")
     const res = await fetch(
-      "https://fyp-backend-1-og5r.onrender.com/channel_wise_entity",
+      "http://127.0.0.1:8000/channel_wise_entity",
       {
         method: "POST",
         headers: {
